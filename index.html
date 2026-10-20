@@ -1,206 +1,253 @@
-<!DOCTYPE html>  <html lang="en" class="dark">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Garuda Gems Analyzer</title>  
-    <script src="https://cdn.tailwindcss.com"></script>  
-    <script>  
-        tailwind.config = {  
-            darkMode: 'class',  
-            theme: {  
-                extend: {  
-                    colors: {  
-                        darkbg: '#0f172a',  
-                        cardbg: '#1e293b',  
-                        accent: '#f59e0b'  
-                    }  
-                }  
-            }  
-        }  
-    </script>  
-</head>  
-<body class="bg-darkbg text-slate-100 min-h-screen font-sans p-4">  
-    <div class="max-w-md mx-auto space-y-6">  
-        <!-- Header -->  
-        <header class="text-center py-4 border-b border-slate-700">  
-            <h1 class="text-2xl font-bold text-accent">Garuda Gems Analyzer</h1>  
-            <p class="text-xs text-slate-400 mt-1">Observed History & Pattern Tracker (No Guaranteed Predictions)</p>  
-        </header>  <!-- Screenshot Upload Section -->  
-    <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">  
-        <h2 class="text-sm font-semibold mb-2 text-slate-300">1. Upload Game Screenshot</h2>  
-        <input type="file" id="screenshotInput" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">  
-          
-        <div id="previewContainer" class="mt-3 hidden">  
-            <img id="imagePreview" class="w-full h-40 object-cover rounded-lg border border-slate-600 mb-3" alt="Preview">  
-            <button onclick="analyzeScreenshot()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-sm transition">  
-                Analyze Symbols & Win  
-            </button>  
-        </div>  
-    </section>  
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garuda Gems Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b',
+                        accent: '#f59e0b'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkbg text-slate-100 min-h-screen font-sans p-4">
+    <div class="max-w-md mx-auto space-y-6">
+        <!-- Header -->
+        <header class="text-center py-4 border-b border-slate-700">
+            <h1 class="text-2xl font-bold text-accent">Garuda Gems Analyzer</h1>
+            <p class="text-xs text-slate-400 mt-1">Multi-Screenshot Symbol Inspector & History Log</p>
+        </header>
 
-    <!-- Manual Input / Quick Log Section -->  
-    <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">  
-        <h2 class="text-sm font-semibold mb-2 text-slate-300">2. Manual Spin Log (Fallback)</h2>  
-        <div class="grid grid-cols-2 gap-3 mb-3">  
-            <div>  
-                <label class="text-xs text-slate-400 block mb-1">Result Type</label>  
-                <select id="manualResult" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-xs text-slate-200">  
-                    <option value="Win">Win / Cascade</option>  
-                    <option value="FreeSpins">Free Spins Trigger</option>  
-                    <option value="Non-Win">Non-Win</option>  
-                </select>  
-            </div>  
-            <div>  
-                <label class="text-xs text-slate-400 block mb-1">Multiplier / Win (Est)</label>  
-                <input type="text" id="manualWin" placeholder="e.g. 5x or 50" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-xs text-slate-200">  
-            </div>  
-        </div>  
-        <button onclick="logManualSpin()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 rounded-lg text-xs transition">  
-            Add to Spin History  
-        </button>  
-    </section>  
+        <!-- Multiple Screenshot Upload Section -->
+        <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">
+            <h2 class="text-sm font-semibold mb-2 text-slate-300">1. Upload Multiple Screenshots</h2>
+            <input type="file" id="screenshotInput" accept="image/*" multiple class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">
+            <p class="text-[10px] text-slate-500 mt-1">Select one or multiple game screenshots from your device.</p>
+        </section>
 
-    <!-- Statistics Dashboard -->  
-    <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">  
-        <h2 class="text-sm font-semibold mb-3 text-slate-300">3. Statistics & Observed Patterns</h2>  
-        <div class="grid grid-cols-3 gap-2 text-center">  
-            <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">  
-                <span class="text-xs text-slate-400 block">Total Spins</span>  
-                <span id="statTotal" class="text-lg font-bold text-amber-400">0</span>  
-            </div>  
-            <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">  
-                <span class="text-xs text-slate-400 block">Wins Recorded</span>  
-                <span id="statWins" class="text-lg font-bold text-emerald-400">0</span>  
-            </div>  
-            <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">  
-                <span class="text-xs text-slate-400 block">Free Spins</span>  
-                <span id="statFreeSpins" class="text-lg font-bold text-purple-400">0</span>  
-            </div>  
-        </div>  
-    </section>  
+        <!-- Batch Inspection & Confirmation Panel -->
+        <section id="inspectionSection" class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700 hidden">
+            <h2 class="text-sm font-semibold mb-2 text-slate-300">2. Detected Symbols & Confirmation</h2>
+            <div id="batchContainer" class="space-y-4 max-h-96 overflow-y-auto pr-1">
+                <!-- Dynamic image inspection cards injected here -->
+            </div>
+        </section>
 
-    <!-- History Table & Controls -->  
-    <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">  
-        <div class="flex justify-between items-center mb-2">  
-            <h2 class="text-sm font-semibold text-slate-300">Spin History</h2>  
-            <div class="space-x-2">  
-                <button onclick="exportHistory()" class="text-xs text-amber-400 hover:underline">Export</button>  
-                <button onclick="clearHistory()" class="text-xs text-rose-400 hover:underline">Clear</button>  
-            </div>  
-        </div>  
-        <div class="max-h-40 overflow-y-auto border border-slate-700 rounded-lg">  
-            <table class="w-full text-left text-xs">  
-                <thead class="bg-slate-900 sticky top-0 text-slate-400">  
-                    <tr>  
-                        <th class="p-2">Time</th>  
-                        <th class="p-2">Type</th>  
-                        <th class="p-2">Details</th>  
-                    </tr>  
-                </thead>  
-                <tbody id="historyTableBody" class="divide-y divide-slate-800">  
-                    <!-- History rows injected here -->  
-                </tbody>  
-            </table>  
-        </div>  
-    </section>  
-</div>  
+        <!-- Manual Input / Quick Log Section -->
+        <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">
+            <h2 class="text-sm font-semibold mb-2 text-slate-300">3. Manual Spin Log (Fallback)</h2>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Result Type</label>
+                    <select id="manualResult" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-xs text-slate-200">
+                        <option value="Win">Win / Cascade</option>
+                        <option value="FreeSpins">Free Spins Trigger</option>
+                        <option value="Non-Win">Non-Win</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Details / Multiplier</label>
+                    <input type="text" id="manualWin" placeholder="e.g. 5x or Ruby Gem combo" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-xs text-slate-200">
+                </div>
+            </div>
+            <button onclick="logManualSpin()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 rounded-lg text-xs transition">
+                Add to Spin History
+            </button>
+        </section>
 
-<script>  
-    let spinHistory = JSON.parse(localStorage.getItem('garuda_history')) || [];  
+        <!-- Statistics Dashboard -->
+        <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">
+            <h2 class="text-sm font-semibold mb-3 text-slate-300">4. Statistics & Observed Patterns</h2>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                    <span class="text-xs text-slate-400 block">Total Records</span>
+                    <span id="statTotal" class="text-lg font-bold text-amber-400">0</span>
+                </div>
+                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                    <span class="text-xs text-slate-400 block">Wins Recorded</span>
+                    <span id="statWins" class="text-lg font-bold text-emerald-400">0</span>
+                </div>
+                <div class="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                    <span class="text-xs text-slate-400 block">Free Spins</span>
+                    <span id="statFreeSpins" class="text-lg font-bold text-purple-400">0</span>
+                </div>
+            </div>
+        </section>
 
-    const input = document.getElementById('screenshotInput');  
-    const previewContainer = document.getElementById('previewContainer');  
-    const imagePreview = document.getElementById('imagePreview');  
+        <!-- History Table & Controls -->
+        <section class="bg-cardbg p-4 rounded-xl shadow-lg border border-slate-700">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-sm font-semibold text-slate-300">Saved History</h2>
+                <div class="space-x-2">
+                    <button onclick="exportHistory()" class="text-xs text-amber-400 hover:underline">Export</button>
+                    <button onclick="clearHistory()" class="text-xs text-rose-400 hover:underline">Clear</button>
+                </div>
+            </div>
+            <div class="max-h-40 overflow-y-auto border border-slate-700 rounded-lg">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-900 sticky top-0 text-slate-400">
+                        <tr>
+                            <th class="p-2">Time</th>
+                            <th class="p-2">Type</th>
+                            <th class="p-2">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody" class="divide-y divide-slate-800">
+                        <!-- History rows injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
 
-    input.addEventListener('change', (e) => {  
-        const file = e.target.files[0];  
-        if (file) {  
-            const reader = new FileReader();  
-            reader.onload = (event) => {  
-                imagePreview.src = event.target.result;  
-                previewContainer.classList.remove('hidden');  
-            };  
-            reader.readAsDataURL(file);  
-        }  
-    });  
+    <script>
+        let spinHistory = JSON.parse(localStorage.getItem('garuda_history')) || [];
 
-    function analyzeScreenshot() {  
-        // Basic prototype analysis simulation for uploaded screenshot  
-        const simulatedTypes = ['Win', 'Non-Win', 'FreeSpins'];  
-        const randomType = simulatedTypes[Math.floor(Math.random() * simulatedTypes.length)];  
-        const randomDetails = randomType === 'Win' ? `${Math.floor(Math.random() * 15 + 2)}x Cascade` : (randomType === 'FreeSpins' ? 'Bonus Triggered' : 'Standard Spin');  
-          
-        addRecord(randomType, randomDetails);  
-        alert("Screenshot analyzed successfully based on visual sample check!");  
-    }  
+        const input = document.getElementById('screenshotInput');
+        const inspectionSection = document.getElementById('inspectionSection');
+        const batchContainer = document.getElementById('batchContainer');
 
-    function logManualSpin() {  
-        const type = document.getElementById('manualResult').value;  
-        const winVal = document.getElementById('manualWin').value || 'Recorded';  
-        addRecord(type, winVal);  
-        document.getElementById('manualWin').value = '';  
-    }  
+        input.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
 
-    function addRecord(type, details) {  
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });  
-        spinHistory.unshift({ time, type, details });  
-        localStorage.setItem('garuda_history', JSON.stringify(spinHistory));  
-        renderHistory();  
-    }  
+            batchContainer.innerHTML = '';
+            inspectionSection.classList.remove('hidden');
 
-    function renderHistory() {  
-        const tbody = document.getElementById('historyTableBody');  
-        tbody.innerHTML = '';  
-          
-        let total = spinHistory.length;  
-        let wins = spinHistory.filter(s => s.type === 'Win').length;  
-        let freeSpins = spinHistory.filter(s => s.type === 'FreeSpins').length;  
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imgSrc = event.target.result;
+                    createInspectionCard(imgSrc, index);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
 
-        document.getElementById('statTotal').innerText = total;  
-        document.getElementById('statWins').innerText = wins;  
-        document.getElementById('statFreeSpins').innerText = freeSpins;  
+        function createInspectionCard(imgSrc, index) {
+            const cardId = `card-${index}`;
+            const card = document.createElement('div');
+            card.className = "bg-slate-900 p-3 rounded-lg border border-slate-700 space-y-2";
+            card.id = cardId;
 
-        if (total === 0) {  
-            tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-500">No spin history recorded yet.</td></tr>`;  
-            return;  
-        }  
+            card.innerHTML = `
+                <div class="flex gap-3 items-center">
+                    <img src="${imgSrc}" class="w-16 h-16 object-cover rounded border border-slate-600" alt="Screenshot">
+                    <div class="flex-1 text-xs space-y-1">
+                        <span class="text-slate-400 block font-semibold">Image #${index + 1}</span>
+                        <div class="flex gap-2">
+                            <select id="type-${index}" class="bg-slate-800 border border-slate-600 rounded p-1 text-slate-200">
+                                <option value="Win">Win / Cascade</option>
+                                <option value="FreeSpins">Free Spins</option>
+                                <option value="Non-Win">Non-Win</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] text-slate-400 block mb-1">Detected Symbols / Notes (Editable)</label>
+                    <input type="text" id="details-${index}" value="Garuda Wild, Red Gem, Card Symbols (Observed)" class="w-full bg-slate-800 border border-slate-600 rounded p-1 text-xs text-slate-200">
+                </div>
+                <button onclick="confirmAndSave(${index})" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-1.5 rounded text-xs transition">
+                    Confirm & Save to History
+                </button>
+            `;
+            batchContainer.appendChild(card);
+        }
 
-        spinHistory.forEach(item => {  
-            const row = document.createElement('tr');  
-            row.innerHTML = `  
-                <td class="p-2 text-slate-400">${item.time}</td>  
-                <td class="p-2 font-medium ${item.type === 'Win' ? 'text-emerald-400' : (item.type === 'FreeSpins' ? 'text-purple-400' : 'text-slate-300')}">${item.type}</td>  
-                <td class="p-2 text-slate-300">${item.details}</td>  
-            `;  
-            tbody.appendChild(row);  
-        });  
-    }  
+        function confirmAndSave(index) {
+            const type = document.getElementById(`type-${index}`).value;
+            const details = document.getElementById(`details-${index}`).value;
+            
+            addRecord(type, details);
 
-    function clearHistory() {  
-        if (confirm("Are you sure you want to clear your local history?")) {  
-            spinHistory = [];  
-            localStorage.removeItem('garuda_history');  
-            renderHistory();  
-        }  
-    }  
+            // Remove confirmed card from inspection view
+            const card = document.getElementById(`card-${index}`);
+            if (card) {
+                card.remove();
+            }
 
-    function exportHistory() {  
-        if (spinHistory.length === 0) {  
-            alert("No history to export!");  
-            return;  
-        }  
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(spinHistory, null, 2));  
-        const downloadAnchor = document.createElement('a');  
-        downloadAnchor.setAttribute("href", dataStr);  
-        downloadAnchor.setAttribute("download", "garuda_gems_history.json");  
-        document.body.appendChild(downloadAnchor);  
-        downloadAnchor.click();  
-        downloadAnchor.remove();  
-    }  
+            // Hide section if no cards left
+            if (batchContainer.children.length === 0) {
+                inspectionSection.classList.add('hidden');
+            }
+        }
 
-    // Initial render on load  
-    renderHistory();  
-</script>
+        function logManualSpin() {
+            const type = document.getElementById('manualResult').value;
+            const winVal = document.getElementById('manualWin').value || 'Manual Log';
+            addRecord(type, winVal);
+            document.getElementById('manualWin').value = '';
+        }
 
-</body>  
+        function addRecord(type, details) {
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            spinHistory.unshift({ time, type, details });
+            localStorage.setItem('garuda_history', JSON.stringify(spinHistory));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+            
+            let total = spinHistory.length;
+            let wins = spinHistory.filter(s => s.type === 'Win').length;
+            let freeSpins = spinHistory.filter(s => s.type === 'FreeSpins').length;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statWins').innerText = wins;
+            document.getElementById('statFreeSpins').innerText = freeSpins;
+
+            if (total === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-500">No spin history recorded yet.</td></tr>`;
+                return;
+            }
+
+            spinHistory.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="p-2 text-slate-400">${item.time}</td>
+                    <td class="p-2 font-medium ${item.type === 'Win' ? 'text-emerald-400' : (item.type === 'FreeSpins' ? 'text-purple-400' : 'text-slate-300')}">${item.type}</td>
+                    <td class="p-2 text-slate-300">${item.details}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function clearHistory() {
+            if (confirm("Are you sure you want to clear your local history?")) {
+                spinHistory = [];
+                localStorage.removeItem('garuda_history');
+                renderHistory();
+            }
+        }
+
+        function exportHistory() {
+            if (spinHistory.length === 0) {
+                alert("No history to export!");
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(spinHistory, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "garuda_gems_history.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        renderHistory();
+    </script>
+</body>
 </html>
