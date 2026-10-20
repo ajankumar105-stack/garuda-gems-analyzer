@@ -1,3 +1,4 @@
+
 {
   "id": "/garuda-gems-analyzer/",
   "name": "Garuda Gems Analyzer",
@@ -11,12 +12,12 @@
   "background_color": "#121212",
   "icons": [
     {
-      "src": "/garuda-gems-analyzer/icons/icon-192.png",
+      "src": "/garuda-gems-analyzer/167.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/garuda-gems-analyzer/icons/icon-512.png",
+      "src": "/garuda-gems-analyzer/167.png",
       "sizes": "512x512",
       "type": "image/png"
     }
