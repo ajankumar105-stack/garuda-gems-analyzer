@@ -1,90 +1,41 @@
+
 package com.akai.reader
 
 import android.app.Activity
-import android.content.Intent
-import android.media.projection.MediaProjectionManager
 import android.os.Bundle
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.graphics.Color
-import android.view.Gravity
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ProgressBar
 
 class MainActivity : Activity() {
-    private lateinit var message: TextView
-    private val captureRequest = 1001
+override fun onCreate(savedInstanceState: Bundle?) {
+super.onCreate(savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+val layout = FrameLayout(this)
+layout.setBackgroundColor(Color.BLACK)
 
-        val layout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER
-            setPadding(32, 32, 32, 32)
-            setBackgroundColor(Color.rgb(18, 18, 24))
+val webView = WebView(this)
+webView.layoutParams = FrameLayout.LayoutParams(
+ViewGroup.LayoutParams.MATCH_PARENT,
+ViewGroup.LayoutParams.MATCH_PARENT
+)
+
+webView.settings.javaScriptEnabled = true
+webView.settings.javaScri
+webView.webViewClient = WebViewClient()
+
+                                                                                    layout.addView(webView)
+                                                                                            setContentView(layout)
+
+                                                                                                    webView.loadUrl(
+                                                                                                                    "https://ajankumar105-stack.github.io/garuda-gems-analyzer/"
+                                                                                                    )
         }
+}
 
-        val title = TextView(this).apply {
-            text = "Garuda Gems Analyzer"
-            textSize = 24f
-            setTextColor(Color.WHITE)
-            gravity = Gravity.CENTER
+                                                    )
         }
-
-        message = TextView(this).apply {
-            text = "Tap below and allow screen capture."
-            textSize = 16f
-            setTextColor(Color.WHITE)
-            gravity = Gravity.CENTER
-            setPadding(0, 32, 0, 32)
-        }
-
-        val button = Button(this).apply {
-            text = "Capture Screen"
-            setOnClickListener { requestCapture() }
-        }
-
-        layout.addView(title)
-        layout.addView(message)
-        layout.addView(button)
-        setContentView(layout)
-    }
-
-    private fun requestCapture() {
-        val manager = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        startActivityForResult(
-            manager.createScreenCaptureIntent(),
-            captureRequest
-        )
-    }
-
-    @Deprecated("Deprecated by Android")
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != captureRequest) return
-
-        if (resultCode != RESULT_OK || data == null) {
-            message.text = "Screen capture cancelled."
-            return
-        }
-
-        val serviceIntent = Intent(
-            this,
-            ScreenCaptureService::class.java
-        ).apply {
-            putExtra("result_code", resultCode)
-            putExtra("result_data", data)
-        }
-
-        try {
-            startForegroundService(serviceIntent)
-            message.text = "Screen capture started."
-        } catch (e: Exception) {
-            message.text = "Could not start capture: ${e.message}"
-        }
-    }
 }
