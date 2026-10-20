@@ -52,15 +52,39 @@ class MainActivity : Activity() {
 
     private fun requestCapture() {
         val manager = getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        startActivityFor
+        startActivityForResult(
+            manager.createScreenCaptureIntent(),
+            captureRequest
+        )
+    }
 
-startForegroundService(serviceIntent)
-                message.text = "Capture requested. Checking result..."
-            } catch (e: Exception) {
-                message.text = "Could not start capture: ${e.message}"
-            }
-        } else {
-            message.text = "Screen capture permission was cancelled."
+    @Deprecated("Deprecated by Android")
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != captureRequest) return
+
+        if (resultCode != RESULT_OK || data == null) {
+            message.text = "Screen capture cancelled."
+            return
+        }
+
+        val serviceIntent = Intent(
+            this,
+            ScreenCaptureService::class.java
+        ).apply {
+            putExtra("result_code", resultCode)
+            putExtra("result_data", data)
+        }
+
+        try {
+            startForegroundService(serviceIntent)
+            message.text = "Screen capture started."
+        } catch (e: Exception) {
+            message.text = "Could not start capture: ${e.message}"
         }
     }
 }
